@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { ApiError } from '../../api/client'
 import { Button, Drawer, Input } from '../../design-system'
 import { Banner } from '../../shared/components/Banner'
+import { flashState } from '../../shared/hooks/useFlash'
 import { MODULE_PATHS } from '../constants'
 import { CreateResourceSchema, type CreateResourceValues } from '../formSchemas'
 import { useCreateResource } from '../queries'
@@ -48,7 +49,7 @@ export function CreateResourceDrawer({ isOpen, onClose }: CreateResourceDrawerPr
         reset()
         onClose()
         navigate(`/resources/${resource.resourceId}/${MODULE_PATHS.basicInfo}`, {
-          state: { flash: `Resource "${resource.name}" created. Fill in Basic Info next.` },
+          state: flashState(`Resource "${resource.name}" created. Fill in Basic Info next.`),
         })
       },
       onError: (error) => {

@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react'
-import { type NavigateOptions, type To, useLocation, useNavigate } from 'react-router-dom'
+import { type To, useLocation, useNavigate } from 'react-router-dom'
+import type { BannerVariant } from '../components/Banner'
 
-interface FlashState {
-  flash?: string
+export interface Flash {
+  message: string
+  variant: BannerVariant
 }
 
-const readFlash = (state: unknown) => (state as FlashState | null)?.flash
+/** Router state carrying a one-off message to the next page. */
+export const flashState = (message: string, variant: BannerVariant = 'success') => ({
+  flash: { message, variant } satisfies Flash,
+})
+
+const readFlash = (state: unknown) => (state as { flash?: Flash } | null)?.flash
 
 /**
- * One-off success message passed with navigation. It is read once and then removed
- * from history state, so a refresh doesn't show it again.
+ * Reads the message passed with navigation once, then removes it from history state
+ * so a refresh doesn't show it again.
  */
-export function useFlashMessage(): string | undefined {
+export function useFlashMessage(): Flash | undefined {
   const location = useLocation()
   const navigate = useNavigate()
   const [flash] = useState(() => readFlash(location.state))
@@ -31,11 +38,11 @@ export function useFlashMessage(): string | undefined {
  */
 export function useNavigateAfterSave() {
   const navigate = useNavigate()
-  const [pending, setPending] = useState<{ to: To; options: NavigateOptions }>()
+  const [pending, setPending] = useState<{ to: To; message: string }>()
 
   useEffect(() => {
-    if (pending) navigate(pending.to, pending.options)
+    if (pending) navigate(pending.to, { state: flashState(pending.message) })
   }, [pending, navigate])
 
-  return (to: To, flash: string) => setPending({ to, options: { state: { flash } } })
+  return (to: To, message: string) => setPending({ to, message })
 }

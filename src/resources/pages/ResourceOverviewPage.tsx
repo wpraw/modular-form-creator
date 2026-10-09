@@ -65,7 +65,6 @@ function Overview({ resource }: { resource: Resource }) {
     setMessage('Unsubmitted changes discarded.')
   }
 
-  const successMessage = message ?? flash
 
   return (
     <PageLayout
@@ -88,7 +87,11 @@ function Overview({ resource }: { resource: Resource }) {
         </Button>
       }
     >
-      {successMessage ? <Banner variant="success">{successMessage}</Banner> : null}
+      {message ? (
+        <Banner variant="success">{message}</Banner>
+      ) : flash ? (
+        <Banner variant={flash.variant}>{flash.message}</Banner>
+      ) : null}
 
       {buffer ? (
         <Banner

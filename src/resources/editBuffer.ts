@@ -26,7 +26,7 @@ interface EditBufferState {
   clear: (resourceId: number) => void
 }
 
-const isSameModuleData = <T extends object>(a: T, b: T) =>
+export const isSameModuleData = <T extends object>(a: T, b: T) =>
   (Object.keys(a) as (keyof T)[]).every(
     (key) => JSON.stringify(a[key]) === JSON.stringify(b[key]),
   )
