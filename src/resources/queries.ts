@@ -49,10 +49,11 @@ export function useResourceList(params: ResourceListParams) {
   })
 }
 
-export function useResource(id: number) {
+export function useResource(id: number | undefined) {
   return useQuery({
-    queryKey: resourceKeys.detail(id),
-    queryFn: () => getResource(id),
+    queryKey: resourceKeys.detail(id ?? 0),
+    queryFn: () => getResource(id!),
+    enabled: id !== undefined,
   })
 }
 
