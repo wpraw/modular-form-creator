@@ -18,6 +18,10 @@ export interface ResourceListParams {
   sortOrder: SortOrder
 }
 
+// The backend applies `name` as a raw regular expression; escaping keeps it a plain
+// partial match (as documented) and prevents server errors for input like "(".
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 export function listResources({ page, pageSize, status, name, sortOrder }: ResourceListParams) {
   const search = new URLSearchParams({
     page: String(page),
@@ -25,7 +29,7 @@ export function listResources({ page, pageSize, status, name, sortOrder }: Resou
     sortOrder,
   })
   if (status) search.set('status', status)
-  if (name) search.set('name', name)
+  if (name) search.set('name', escapeRegExp(name))
 
   return request(`/api/resources?${search}`, { schema: ResourceListSchema })
 }
