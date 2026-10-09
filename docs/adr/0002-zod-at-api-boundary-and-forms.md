@@ -5,7 +5,7 @@ The backend contract is fixed and may not be modified, yet the frontend needs pr
 ## Considered Options
 
 - **tRPC / ts-rest / GraphQL** — rejected: all require changing the server, which disqualifies the submission.
-- **Generating types from the OpenAPI spec (`openapi-typescript`)** — rejected: the Swagger spec in `backend/src/config/swagger.ts` disagrees with the code (`ProvisioningResponse` documents `Resource | {message, resource}` while the service returns `{alreadyCompleted, resource}`; `category` has no enum; no patterns or length limits) and no JSON spec endpoint is exposed — we would generate wrong types with extra tooling.
+- **Generating types from the OpenAPI spec (`openapi-typescript`)** — rejected: the Swagger spec in `backend/src/config/swagger.ts` is too loose to be a source of truth (`category` has no enum, there are no patterns or length limits, response fields aren't marked required, `ProvisioningResponse` is a `oneOf` while the controller always returns a plain `Resource`) and no JSON spec endpoint is exposed — codegen would add tooling while still needing hand-written rules.
 - **React Hook Form built-in rules + hand-written interfaces** — viable for 9 flat fields and avoids a dependency, but once Zod is needed for response parsing, keeping a second validation system for forms hurts readability.
 
 ## Consequences
